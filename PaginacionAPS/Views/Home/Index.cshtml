@@ -4,9 +4,17 @@
     ViewData["Title"] = "Index";
     var cantidadPaginas = (int)Math.Ceiling((double)Model.TotalDeRegistros / Model.RegistrosPorPagina);
 }
+<h1>Paginador</h1>
+<h4>Filtro</h4>
 
-<h1>Index</h1>
+@using (Html.BeginForm(null, null, FormMethod.Get))
+{
+    <label for="edad">Edad</label>
+    <input type="number" name="edad" id="edad" />
+    <input type="submit" value="Filtrar" class="btn btn-success" />
+}
 
+<h4>Resultados</h4>
 <table class="table table-striped">
     <thead>
         <tr>

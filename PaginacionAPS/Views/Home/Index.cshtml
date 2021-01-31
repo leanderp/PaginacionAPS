@@ -1,0 +1,38 @@
+﻿@model PaginacionAPS.ViewModels.IndexViewModel
+
+@{
+    ViewData["Title"] = "Index";
+    var cantidadPaginas = (int)Math.Ceiling((double)Model.TotalDeRegistros / Model.RegistrosPorPagina);
+}
+
+<h1>Index</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Nombre</th>
+            <th>Edad</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var persona in Model.Personas)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => persona.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => persona.Nombre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => persona.Edad)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div>
+    @await Html.PartialAsync("_paginador", Model)
+</div>
+

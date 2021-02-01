@@ -15,33 +15,42 @@ namespace PaginacionAPS.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
         private readonly AppDbContext _context;
         public HomeController(ILogger<HomeController> logger, AppDbContext context)
         {
-            _logger = logger;
             _context = context;
         }
 
         public IActionResult Index(int? edad, int pagina = 1)
         {
+            if (pagina < 1)
+            {
+                pagina = 1;
+            }
+
             var cantidadRegistrosPorPagina = 10; // parámetro
             Func<Persona, bool> predicado = x => !edad.HasValue || edad.Value == x.Edad;
             var personas = _context.Personas.Where(predicado).OrderBy(x => x.Id)
                 .Skip((pagina - 1) * cantidadRegistrosPorPagina)
                 .Take(cantidadRegistrosPorPagina).ToList();
-            var totalDeRegistros = _context.Personas.Count();
 
-            var modelo = new IndexViewModel();
-            modelo.Personas = personas;
-            modelo.PaginaActual = pagina;
-            modelo.TotalDeRegistros = totalDeRegistros;
-            modelo.RegistrosPorPagina = cantidadRegistrosPorPagina;
-            modelo.ValoresQueryString = new RouteValueDictionary();
-            modelo.ValoresQueryString["edad"] = edad;
+            int totalDeRegistros;
+            if (edad != null)
+            {
+                totalDeRegistros = _context.Personas.Where(x => x.Edad == edad).Count();
+                this.ViewBag.Edad = edad;
+            }
+            else
+            {
+                totalDeRegistros = _context.Personas.Count();
+            }
+            
 
 
-            return View(modelo);
+            var paginador = new Paginador(totalDeRegistros, pagina, cantidadRegistrosPorPagina);
+
+            this.ViewBag.Paginador = paginador;
+            return View(personas);
         }
 
         public IActionResult Privacy()

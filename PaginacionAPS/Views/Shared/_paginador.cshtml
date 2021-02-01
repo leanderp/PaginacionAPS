@@ -1,72 +1,75 @@
-﻿@model BaseModelo
+﻿@model PaginacionAPS.ViewModels.Paginador
 
-@{
-    var cantidadPaginas = (int)Math.Ceiling((double)Model.TotalDeRegistros / Model.RegistrosPorPagina);
-}
-
-<!--Funcionalidad: Anterior y siguiente-->
-
-<ul class="pagination">
-    @if (Model.PaginaActual == 1)
+<div class="container">
+    @if (Model.TotalPaginas > 0)
     {
-        Model.ValoresQueryString["pagina"] = 1;
-        <li class="disabled">@Html.ActionLink("Anterior", null, Model.ValoresQueryString)</li>
-    }
-    else
-    {
-        Model.ValoresQueryString["pagina"] = Model.PaginaActual - 1;
-        <li>@Html.ActionLink("Anterior", null, Model.ValoresQueryString)</li>
-    }
+        <ul class="pagination justify-content-end">
 
-    @if (Model.PaginaActual == cantidadPaginas)
-    {
-        Model.ValoresQueryString["pagina"] = cantidadPaginas;
-        <li class="disabled">@Html.ActionLink("Siguiente", null, Model.ValoresQueryString)</li>
-    }
-    else
-    {
-        Model.ValoresQueryString["pagina"] = Model.PaginaActual + 1;
-        <li>@Html.ActionLink("Siguiente", null, Model.ValoresQueryString)</li>
-    }
-</ul>
+            @if (Model.Edad != null)
+            {
 
-<!--Funcionalidad: Páginas-->
+                @if (Model.PaginaActual > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-controller="Home" asp-action="Index" asp-route-edad="@Model.Edad" asp-route-pagina="1">Primera</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" asp-controller="Home" asp-action="Index" asp-route-edad="@Model.Edad" asp-route-pagina="@(Model.PaginaActual - 1)">Anterior</a>
+                    </li>
+                }
 
-@{
-    int Inicial = 1;
-    var radio = 3;
-    var cantidadMaximaDePaginas = radio * 2 + 1;
-    int Final = (cantidadPaginas > cantidadMaximaDePaginas) ? cantidadMaximaDePaginas : cantidadPaginas;
-    if (Model.PaginaActual > radio + 1)
-    {
-        Inicial = Model.PaginaActual - radio;
-        if (cantidadPaginas > Model.PaginaActual + radio)
-        {
-            Final = Model.PaginaActual + radio;
-        }
-        else
-        {
-            Final = cantidadPaginas;
-        }
+                @for (var pag = Model.InicioPagina; pag <= Model.FinalPagina; pag++)
+                {
+                    <li class="page-item @(pag == Model.PaginaActual ? "active": "")">
+                        <a class="page-link" asp-controller="Home" asp-action="Index" asp-route-edad="@Model.Edad" asp-route-pagina="@pag">@pag</a>
+                    </li>
+                }
+
+                @if (Model.PaginaActual < Model.TotalPaginas)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-controller="Home" asp-action="Index" asp-route-edad="@Model.Edad" asp-route-pagina="@(Model.PaginaActual +1)">Siguiente</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" asp-controller="Home" asp-action="Index" asp-route-edad="@Model.Edad" asp-route-pagina="@(Model.TotalPaginas)">Ultima</a>
+                    </li>
+                }
+            }
+            else
+            {
+
+                @if (Model.PaginaActual > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-controller="Home" asp-action="Index" asp-route-pagina="1">Primera</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" asp-controller="Home" asp-action="Index" asp-route-pagina="@(Model.PaginaActual - 1)">Anterior</a>
+                    </li>
+                }
+
+                @for (var pag = Model.InicioPagina; pag <= Model.FinalPagina; pag++)
+                {
+                    <li class="page-item @(pag == Model.PaginaActual ? "active": "")">
+                        <a class="page-link" asp-controller="Home" asp-action="Index" asp-route-pagina="@pag">@pag</a>
+                    </li>
+                }
+
+
+
+                @if (Model.PaginaActual < Model.TotalPaginas)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-controller="Home" asp-action="Index" asp-route-pagina="@(Model.PaginaActual +1)">Siguiente</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" asp-controller="Home" asp-action="Index" asp-route-pagina="@(Model.TotalPaginas)">Ultima</a>
+                    </li>
+                }
+            }
+
+
+        </ul>
     }
-}
+</div>
 
-
-<ul class="pagination">
-    @{Model.ValoresQueryString["pagina"] = 1; }
-    <li>@Html.ActionLink("Primera", null, Model.ValoresQueryString)</li>
-    @for (int i = Inicial; i <= Final; i++)
-    {
-        Model.ValoresQueryString["pagina"] = i;
-        if (i == Model.PaginaActual)
-        {
-            <li class="active">@Html.ActionLink(i.ToString(), null, Model.ValoresQueryString)</li>
-        }
-        else
-        {
-            <li>@Html.ActionLink(i.ToString(), null, Model.ValoresQueryString)</li>
-        }
-    }
-    @{Model.ValoresQueryString["pagina"] = cantidadPaginas; }
-    <li>@Html.ActionLink("Ultima", null, Model.ValoresQueryString)</li>
-</ul>

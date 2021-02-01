@@ -1,18 +1,41 @@
-﻿@model PaginacionAPS.ViewModels.IndexViewModel
-
+﻿@model List<PaginacionAPS.Models.Persona>
+@using PaginacionAPS.ViewModels;
 @{
-    ViewData["Title"] = "Index";
-    var cantidadPaginas = (int)Math.Ceiling((double)Model.TotalDeRegistros / Model.RegistrosPorPagina);
+    ViewData["Title"] = "Paginador";
+
+    Paginador paginador = new Paginador();
+
+    int paginaNro = 0;
+
+    if (ViewBag.Paginador != null)
+    {
+        paginador = ViewBag.Paginador;
+        paginaNro = paginador.PaginaActual;
+    }
+
+    if (ViewBag.Edad != null)
+    {
+        paginador.Edad = ViewBag.Edad;
+    }
+
 }
 <h1>Paginador</h1>
-<h4>Filtro</h4>
 
-@using (Html.BeginForm(null, null, FormMethod.Get))
-{
-    <label for="edad">Edad</label>
-    <input type="number" name="edad" id="edad" />
-    <input type="submit" value="Filtrar" class="btn btn-success" />
-}
+<div class="row">
+    <div class="col">
+        <span class="float-right">
+            <h4>Filtro</h4>
+            <form class="ml-auto" asp-action="Index" asp-controller="Home">
+                <label for="Edad">Edad</label>
+                <input type="number" name="edad" id="edad" />
+                <input type="submit" value="Filtrar" class="btn btn-success" />
+            </form>
+        </span>
+        <span class="float-left">
+            <a class="btn btn-primary" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
+        </span>
+    </div>
+</div>
 
 <h4>Resultados</h4>
 <table class="table table-striped">
@@ -24,7 +47,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var persona in Model.Personas)
+        @foreach (var persona in Model)
         {
             <tr>
                 <td>
@@ -40,7 +63,5 @@
         }
     </tbody>
 </table>
-<div>
-    @await Html.PartialAsync("_paginador", Model)
-</div>
+<partial name="_paginador" model="@paginador" />
 

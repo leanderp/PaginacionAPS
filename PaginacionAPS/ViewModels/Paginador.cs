@@ -33,7 +33,7 @@ namespace PaginacionAPS.ViewModels
 
             if (inicioPagina <= 0)
             {
-                finalPagina = finalPagina - (inicioPagina - 1); // 6-(-3-1) = 10
+                finalPagina -= (inicioPagina - 1); // 6-(-3-1) = 10
                 inicioPagina = 1;
             }
 

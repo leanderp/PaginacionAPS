@@ -16,7 +16,7 @@ namespace PaginacionAPS.Controllers
     public class HomeController : Controller
     {
         private readonly AppDbContext _context;
-        public HomeController(ILogger<HomeController> logger, AppDbContext context)
+        public HomeController(AppDbContext context)
         {
             _context = context;
         }
@@ -29,7 +29,7 @@ namespace PaginacionAPS.Controllers
             }
 
             var cantidadRegistrosPorPagina = 10; // parámetro
-            Func<Persona, bool> predicado = x => !edad.HasValue || edad.Value == x.Edad;
+            bool predicado(Persona x) => !edad.HasValue || edad.Value == x.Edad;
             var personas = _context.Personas.Where(predicado).OrderBy(x => x.Id)
                 .Skip((pagina - 1) * cantidadRegistrosPorPagina)
                 .Take(cantidadRegistrosPorPagina).ToList();
